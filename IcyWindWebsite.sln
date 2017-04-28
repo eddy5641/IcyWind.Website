@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26228.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IcyWindWebsite", "IcyWindWebsite\IcyWindWebsite.csproj", "{C56F46B7-0FF4-4705-AE9D-ACA24ABDFC5E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IcyWindWebsite.API", "IcyWindWebsite.API\IcyWindWebsite.API.csproj", "{498EE62E-8ACB-421D-882F-15A0C3CF9E16}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{C56F46B7-0FF4-4705-AE9D-ACA24ABDFC5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C56F46B7-0FF4-4705-AE9D-ACA24ABDFC5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C56F46B7-0FF4-4705-AE9D-ACA24ABDFC5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{498EE62E-8ACB-421D-882F-15A0C3CF9E16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{498EE62E-8ACB-421D-882F-15A0C3CF9E16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{498EE62E-8ACB-421D-882F-15A0C3CF9E16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{498EE62E-8ACB-421D-882F-15A0C3CF9E16}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
