@@ -18,7 +18,11 @@ namespace IcyWindWebsite.API.Controllers
         [HttpGet]
         public string Get()
         {
-            return "Error";
+            return @"
+<!doctype html>
+<html>
+    API IS IN BETA. TRY AGAIN LATER
+</html>";
         }
 
         /// <summary>

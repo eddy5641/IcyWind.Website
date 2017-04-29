@@ -13,24 +13,56 @@ namespace IcyWindWebsite.API
         /// </summary>
         public static MySqlConnection conn;
 
-        public static bool SendCommand()
+        public static bool SendNonQueryCommand(string commandText, params KeyValuePair<string, string>[] paramsValues)
         {
             try
             {
+                //Create the command
                 MySqlCommand cmd = new MySqlCommand()
                 {
                     Connection = conn,
-                    CommandText = "INSERT INTO Authors(Name) VALUES(@Name)"
+                    CommandText = commandText
+                    //CommandText = "INSERT INTO icywinddb(Username,UID,PasswordHash,StoredData) VALUES(@Username)"
                 };
                 cmd.Prepare();
-
-                cmd.Parameters.AddWithValue("@Name", "Trygve Gulbranssen");
+                foreach (var para in paramsValues)
+                {
+                    cmd.Parameters.AddWithValue(para.Key, para.Value);
+                }
+                //cmd.Parameters.AddWithValue("@Username", "Trygve Gulbranssen");
                 cmd.ExecuteNonQuery();
                 return true;
             }
             catch
             {
                 return false;
+            }
+        }
+
+
+        public static int SendQueryCommand(string commandText, params KeyValuePair<string, string>[] paramsValues)
+        {
+            try
+            {
+                //Create the command
+                MySqlCommand cmd = new MySqlCommand()
+                {
+                    Connection = conn,
+                    CommandText = commandText
+                    //CommandText = "INSERT INTO icywinddb(Username,UID,PasswordHash,StoredData) VALUES(@Username)"
+                };
+                cmd.Prepare();
+                foreach (var para in paramsValues)
+                {
+                    cmd.Parameters.AddWithValue(para.Key, para.Value);
+                }
+                //cmd.Parameters.AddWithValue("@Username", "Trygve Gulbranssen");
+                
+                return cmd.ExecuteNonQuery();
+            }
+            catch
+            {
+                return -1;
             }
         }
     }
