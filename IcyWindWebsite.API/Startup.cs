@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using IcyWindWebsite.API.Controllers;
 
 namespace IcyWindWebsite.API
 {
@@ -27,6 +28,18 @@ namespace IcyWindWebsite.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            try
+            {
+                UserDatabaseHelper.conn = new MySql.Data.MySqlClient.MySqlConnection
+                {
+                    ConnectionString = StaticVars.connString
+                };
+                UserDatabaseHelper.conn.Open();
+            }
+            catch (MySql.Data.MySqlClient.MySqlException ex)
+            {
+                //unused
+            }
             // Add framework services.
             services.AddMvc();
         }

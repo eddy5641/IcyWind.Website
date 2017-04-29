@@ -18,7 +18,7 @@ namespace IcyWindWebsite.API
         /// <summary>
         /// This key must be changed if you are running this on your own server for security reasons
         /// </summary>
-        //Default M46IrenJ86WOI94j8968HE94ngji9
+        //Default jZNYcm7ZPfU3zbDh28y3kfgjd2gUR5
         public const string AdminKey = @"jZNYcm7ZPfU3zbDh28y3kfgjd2gUR5";
     }
 }
