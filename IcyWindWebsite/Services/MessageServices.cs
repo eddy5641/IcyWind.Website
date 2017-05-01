@@ -1,4 +1,6 @@
 ﻿using IcyWindWebsite.Helpers;
+using MailKit.Net.Smtp;
+using MimeKit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +21,29 @@ namespace IcyWindWebsite.Services
         string[] numberRemove = new[] { "-", " ", "(", ")" };
         public Task SendEmailAsync(string email, string subject, string message)
         {
+            message += Environment.NewLine;
+            message += "Do not reply to this email. It will be declined by the server.";
+
+            message += Environment.NewLine;
+            message += "Thank you for using IcyWind ~Potato";
+
+            var messageS = new MimeMessage();
+            messageS.From.Add(new MailboxAddress("noreply", "noreply@icywindclient.com"));
+            messageS.To.Add(new MailboxAddress(email.Split('@')[0], email));
+            messageS.Subject = subject;
+            messageS.Body = new TextPart()
+            {
+                Text = message
+            };
+
+            using (var client = new SmtpClient())
+            {
+                client.Connect("email-smtp.us-west-2.amazonaws.com", 587, true);
+                client.Authenticate(StaticVars.emailUserPass);
+                client.Send(messageS);
+                client.Disconnect(true);
+            }
+            
             return Task.FromResult(0);
         }
 

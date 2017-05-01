@@ -41,7 +41,7 @@ namespace IcyWindWebsite
         {
             // Add framework services.
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(StaticVars.connString));
+                options.UseSqlServer(StaticVars.msConnString));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()

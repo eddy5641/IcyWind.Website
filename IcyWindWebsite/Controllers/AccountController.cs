@@ -114,20 +114,20 @@ namespace IcyWindWebsite.Controllers
             if (ModelState.IsValid)
             {
                 var verifyEmail = KickBoxAPI.CheckEmail(model.Email);
-                if (verifyEmail.result.ToLower() == "undeliverable")
+                if (verifyEmail.Result.ToLower() == "undeliverable")
                 {
-                    if (string.IsNullOrWhiteSpace(verifyEmail.did_you_mean))
+                    if (string.IsNullOrWhiteSpace(verifyEmail.DidYouMean))
                     {
                         ModelState.AddModelError(string.Empty, "Unable to verify your email.");
                     }
                     else
                     {
                         ModelState.AddModelError(string.Empty,
-                            $"Unable to verify your email. Is your email actually: {verifyEmail.did_you_mean}");
+                            $"Unable to verify your email. Is your email actually: {verifyEmail.DidYouMean}");
                     }
                     return View(model);
                 }
-                else if (verifyEmail.result.ToLower() == "risky")
+                else if (verifyEmail.Result.ToLower() == "risky")
                 {
                     ModelState.AddModelError(string.Empty, 
                         "There was an error with your email. Please try another email.");

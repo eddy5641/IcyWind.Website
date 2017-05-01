@@ -1,10 +1,5 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace IcyWindWebsite.Helpers
 {
@@ -24,18 +19,43 @@ namespace IcyWindWebsite.Helpers
 
     public class KickBoxEmailResult
     {
-        public string result { get; set; }
-        public string reason { get; set; }
-        public bool role { get; set; }
-        public bool free { get; set; }
-        public bool disposable { get; set; }
-        public bool accept_all { get; set; }
-        public string did_you_mean { get; set; }
-        public int sendex { get; set; }
-        public string email { get; set; }
-        public string user { get; set; }
-        public string domain { get; set; }
-        public bool success { get; set; }
-        public string message { get; set; }
+        [JsonProperty("result")]
+        public string Result { get; set; }
+
+        [JsonProperty("reason")]
+        public string Reason { get; set; }
+
+        [JsonProperty("role")]
+        public bool Role { get; set; }
+
+        [JsonProperty("free")]
+        public bool Free { get; set; }
+
+        [JsonProperty("disposable")]
+        public bool Disposable { get; set; }
+
+        [JsonProperty("accept_all")]
+        public bool AcceptAll { get; set; }
+
+        [JsonProperty("did_you_mean")]
+        public string DidYouMean { get; set; }
+
+        [JsonProperty("sendex")]
+        public int Sendex { get; set; }
+
+        [JsonProperty("email")]
+        public string Email { get; set; }
+
+        [JsonProperty("user")]
+        public string User { get; set; }
+
+        [JsonProperty("domain")]
+        public string Domain { get; set; }
+
+        [JsonProperty("success")]
+        public bool Success { get; set; }
+
+        [JsonProperty("message")]
+        public string Message { get; set; }
     }
 }
