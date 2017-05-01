@@ -13,6 +13,8 @@ using IcyWindWebsite.Models;
 using IcyWindWebsite.Models.AccountViewModels;
 using IcyWindWebsite.Services;
 using IcyWindWebsite.Helpers;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace IcyWindWebsite.Controllers
 {
@@ -71,6 +73,18 @@ namespace IcyWindWebsite.Controllers
                 if (result.Succeeded)
                 {
                     _logger.LogInformation(1, "User logged in.");
+
+                    var user = await _userManager.FindByNameAsync(model.Username);
+                    if (!user.EmailConfirmed)
+                    {
+                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        var callbackUrl = Url.Action(nameof(ConfirmEmail), "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                        await _emailSender.SendEmailAsync(user.Email, "Confirm your account",
+                            $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>");
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        _logger.LogInformation(3, "User created a new account with password.");
+                    }
+
                     return RedirectToLocal(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
@@ -111,9 +125,19 @@ namespace IcyWindWebsite.Controllers
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
+            if (model.Email != "eddydavinchi@gmail.com")
+            {
+                ModelState.AddModelError(string.Empty, "Registration is closed. Try again later");
+
+                return View(model);
+            }
             if (ModelState.IsValid)
             {
-                var verifyEmail = KickBoxAPI.CheckEmail(model.Email);
+                //var verifyEmail = KickBoxAPI.CheckEmail(model.Email);
+                var verifyEmail = new KickBoxEmailResult
+                {
+                    Result = "success"
+                };
                 if (verifyEmail.Result.ToLower() == "undeliverable")
                 {
                     if (string.IsNullOrWhiteSpace(verifyEmail.DidYouMean))
@@ -137,6 +161,7 @@ namespace IcyWindWebsite.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    UserDatabaseHelper.CreateUser(model.Username, user.Id, SHA1(model.Password));
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=532713
                     // Send an email with this link
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -152,6 +177,33 @@ namespace IcyWindWebsite.Controllers
 
             // If we got this far, something failed, redisplay form
             return View(model);
+        }
+
+        public static SHA1 data;
+        public static StringBuilder sb;
+        public static string SHA1(string plainTextString)
+        {
+            if (data == null)
+            {
+                data = System.Security.Cryptography.SHA1.Create();
+            }
+            return HexStringFromBytes(data.ComputeHash(Encoding.UTF8.GetBytes(plainTextString)));
+        }
+
+        public static string HexStringFromBytes(byte[] bytes)
+        {
+            if (sb == null)
+            {
+                sb = new StringBuilder();
+            }
+            sb.Clear();
+
+            foreach (byte b in bytes)
+            {
+                var hex = b.ToString("x2");
+                sb.Append(hex);
+            }
+            return sb.ToString();
         }
 
         //

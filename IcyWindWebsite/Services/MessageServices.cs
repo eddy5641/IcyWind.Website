@@ -1,5 +1,6 @@
 ﻿using IcyWindWebsite.Helpers;
 using MailKit.Net.Smtp;
+using MailKit.Security;
 using MimeKit;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace IcyWindWebsite.Services
     // when you turn on two-factor authentication in ASP.NET Identity.
     // For more details see this link https://go.microsoft.com/fwlink/?LinkID=532713
 
-    //Don't even bother, I will handle this before pushing to server
+    //Don't even bother, You don't have the full static vars class
     public class AuthMessageSender : IEmailSender, ISmsSender
     {
         string[] numberRemove = new[] { "-", " ", "(", ")" };
@@ -38,7 +39,7 @@ namespace IcyWindWebsite.Services
 
             using (var client = new SmtpClient())
             {
-                client.Connect("email-smtp.us-west-2.amazonaws.com", 587, true);
+                client.Connect("email-smtp.us-west-2.amazonaws.com", 587, SecureSocketOptions.StartTls);
                 client.Authenticate(StaticVars.emailUserPass);
                 client.Send(messageS);
                 client.Disconnect(true);
@@ -53,16 +54,12 @@ namespace IcyWindWebsite.Services
             {
                 number = number.Replace(remove, "");
             }
-            // Your Account SID from twilio.com/console
-            var accountSid = "ACe282dd0c7d62c40bb6a9db3a5358f6e4";
-            // Your Auth Token from twilio.com/console
-            var authToken = "auth_token";
 
-            TwilioClient.Init(accountSid, authToken);
+            TwilioClient.Init(StaticVars.AccountSid, StaticVars.AuthToken);
 
             var messagedata = MessageResource.Create(
                    to: new PhoneNumber($"+{number}"),
-                   from: new PhoneNumber("+6046708394"),
+                   from: new PhoneNumber("6046708394"),
                    body: message);
 
             return Task.FromResult(messagedata.ErrorCode ?? 0);

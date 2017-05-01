@@ -12,6 +12,8 @@ using Microsoft.Extensions.Logging;
 using IcyWindWebsite.Data;
 using IcyWindWebsite.Models;
 using IcyWindWebsite.Services;
+using Google.Cloud.Datastore.V1;
+using Google.Apis.Auth.OAuth2;
 
 namespace IcyWindWebsite
 {
@@ -39,7 +41,10 @@ namespace IcyWindWebsite
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add framework services.
+            //var credential = GoogleCredential.FromJson(StaticVars.googleApiJson);
+            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", @"C:\Users\ed_12\Downloads\Certs\IcyWind-c94b02a65607.json");
+            UserDatabaseHelper.db = DatastoreDb.Create(StaticVars.projId);
+            
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(StaticVars.msConnString));
 

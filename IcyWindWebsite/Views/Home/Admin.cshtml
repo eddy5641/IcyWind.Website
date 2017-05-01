@@ -1,0 +1,35 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using IcyWindWebsite.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@{
+    ViewData["Title"] = "Admin Panel";
+}
+<h2>@ViewData["Title"].</h2>
+
+
+@if (SignInManager.IsSignedIn(User))
+{
+    //Check if user is admin. Only display these functions if they are an admin because
+    //That is how we prevent unauthorized users from getting into this page
+    //This is where eddy lives and breathes :)
+    var user = UserDatabaseHelper.GetUserData(UserManager.GetUserId(User));
+    if ((bool)user["IsAdmin"])
+    {
+        <a>Yay</a>
+    }
+    else
+    {
+        <div>
+            Nothing to see here ;)
+        </div>
+    }
+}
+else
+{
+    <div>
+        Nothing to see here :'(
+    </div>
+}
+

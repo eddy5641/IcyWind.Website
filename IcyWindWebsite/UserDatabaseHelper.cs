@@ -1,69 +1,47 @@
-﻿using MySql.Data.MySqlClient;
+﻿using Google.Cloud.Datastore.V1;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace IcyWindWebsite.API
+namespace IcyWindWebsite
 {
     public static class UserDatabaseHelper
     {
-        /// <summary>
-        /// The MySQL server location
-        /// </summary>
-        public static MySqlConnection conn;
+        public static DatastoreDb db;
 
-        public static bool SendNonQueryCommand(string commandText, params KeyValuePair<string, string>[] paramsValues)
+        public static void CreateUser(string username, string uid, string passhash)
         {
-            try
+            KeyFactory keyFactory = db.CreateKeyFactory("IcyWind");
+            Key key = keyFactory.CreateKey(username);
+
+            var task = new Entity
             {
-                //Create the command
-                MySqlCommand cmd = new MySqlCommand()
-                {
-                    Connection = conn,
-                    CommandText = commandText
-                    //CommandText = "INSERT INTO icywinddb(Username,UID,PasswordHash,StoredData) VALUES(@Username)"
-                };
-                cmd.Prepare();
-                foreach (var para in paramsValues)
-                {
-                    cmd.Parameters.AddWithValue(para.Key, para.Value);
-                }
-                //cmd.Parameters.AddWithValue("@Username", "Trygve Gulbranssen");
-                cmd.ExecuteNonQuery();
-                return true;
-            }
-            catch
+                Key = key,
+                ["data"] = string.Empty,
+                ["passhash"] = passhash,
+                ["uid"] = uid,
+                ["IsAdmin"] = false,
+                ["IsDonator"] = false,
+                ["DonateAmount"] = 0
+            };
+
+            using (DatastoreTransaction transaction = db.BeginTransaction())
             {
-                return false;
+                // Saves the task
+                transaction.Upsert(task);
+                transaction.Commit();
             }
         }
 
-
-        public static int SendQueryCommand(string commandText, params KeyValuePair<string, string>[] paramsValues)
+        public static Entity GetUserData(string userid)
         {
-            try
+            var query = new Query("IcyWind")
             {
-                //Create the command
-                MySqlCommand cmd = new MySqlCommand()
-                {
-                    Connection = conn,
-                    CommandText = commandText
-                    //CommandText = "INSERT INTO icywinddb(Username,UID,PasswordHash,StoredData) VALUES(@Username)"
-                };
-                cmd.Prepare();
-                foreach (var para in paramsValues)
-                {
-                    cmd.Parameters.AddWithValue(para.Key, para.Value);
-                }
-                //cmd.Parameters.AddWithValue("@Username", "Trygve Gulbranssen");
-                
-                return cmd.ExecuteNonQuery();
-            }
-            catch
-            {
-                return -1;
-            }
+                Filter = Filter.Equal("uid", userid)
+            };
+            var data = db.RunQuery(query);
+            return data.Entities.First();
         }
     }
 }
