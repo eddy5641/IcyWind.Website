@@ -44,7 +44,7 @@
                         var user = UserDatabaseHelper.GetUserData(UserManager.GetUserId(User));
                         if ((bool) user["IsAdmin"])
                         {
-                            <li><a asp-area="" asp-controller="Home" asp-action="Index">Admin Panel</a></li>
+                            <li><a asp-area="" asp-controller="Home" asp-action="Admin">Admin Panel</a></li>
                         }
                     }
                     <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>

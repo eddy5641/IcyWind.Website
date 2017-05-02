@@ -75,15 +75,6 @@ namespace IcyWindWebsite.Controllers
                     _logger.LogInformation(1, "User logged in.");
 
                     var user = await _userManager.FindByNameAsync(model.Username);
-                    if (!user.EmailConfirmed)
-                    {
-                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                        var callbackUrl = Url.Action(nameof(ConfirmEmail), "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                        await _emailSender.SendEmailAsync(user.Email, "Confirm your account",
-                            $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>");
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        _logger.LogInformation(3, "User created a new account with password.");
-                    }
 
                     return RedirectToLocal(returnUrl);
                 }
@@ -161,7 +152,8 @@ namespace IcyWindWebsite.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    UserDatabaseHelper.CreateUser(model.Username, user.Id, SHA1(model.Password));
+                    var salt = UserDatabaseHelper.MakeSalt();
+                    UserDatabaseHelper.CreateUser(model.Username, user.Id, SHA1(model.Password, salt), salt);
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=532713
                     // Send an email with this link
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -181,29 +173,25 @@ namespace IcyWindWebsite.Controllers
 
         public static SHA1 data;
         public static StringBuilder sb;
-        public static string SHA1(string plainTextString)
+
+        public static string SHA1(string plainTextString, byte[] salt)
         {
             if (data == null)
             {
                 data = System.Security.Cryptography.SHA1.Create();
             }
-            return HexStringFromBytes(data.ComputeHash(Encoding.UTF8.GetBytes(plainTextString)));
+            return UserDatabaseHelper.ByteArrayToString(data.ComputeHash(Combine(Encoding.UTF8.GetBytes(plainTextString), salt)));
         }
-
-        public static string HexStringFromBytes(byte[] bytes)
+        public static byte[] Combine(params byte[][] arrays)
         {
-            if (sb == null)
+            byte[] rv = new byte[arrays.Sum(a => a.Length)];
+            int offset = 0;
+            foreach (byte[] array in arrays)
             {
-                sb = new StringBuilder();
+                Buffer.BlockCopy(array, 0, rv, offset, array.Length);
+                offset += array.Length;
             }
-            sb.Clear();
-
-            foreach (byte b in bytes)
-            {
-                var hex = b.ToString("x2");
-                sb.Append(hex);
-            }
-            return sb.ToString();
+            return rv;
         }
 
         //
