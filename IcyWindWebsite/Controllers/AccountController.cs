@@ -153,9 +153,9 @@ namespace IcyWindWebsite.Controllers
                 if (result.Succeeded)
                 {
                     var salt = UserDatabaseHelper.MakeSalt();
-                    UserDatabaseHelper.CreateUser(model.Username, user.Id, SHA1(model.Password, salt), salt);
-                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=532713
-                    // Send an email with this link
+                    UserDatabaseHelper.CreateUser(model.Username, user.Id, 
+                        SHA1(model.Password + StaticVars.pepper, salt), model.Email, salt);
+
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.Action(nameof(ConfirmEmail), "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                     await _emailSender.SendEmailAsync(model.Email, "Confirm your account",

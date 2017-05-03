@@ -96,6 +96,11 @@ namespace IcyWindWebsite.Controllers
             return View();
         }
 
+        public IActionResult Upgrade()
+        {
+            return View();
+        }
+
         //
         // POST: /Manage/AddPhoneNumber
         [HttpPost]

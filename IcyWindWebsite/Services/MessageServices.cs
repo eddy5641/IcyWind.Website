@@ -1,7 +1,6 @@
 ﻿using IcyWindWebsite.Helpers;
-using MailKit.Net.Smtp;
-using MailKit.Security;
-using MimeKit;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,32 +19,16 @@ namespace IcyWindWebsite.Services
     public class AuthMessageSender : IEmailSender, ISmsSender
     {
         string[] numberRemove = new[] { "-", " ", "(", ")" };
-        public Task SendEmailAsync(string email, string subject, string message)
+        public async Task<int> SendEmailAsync(string email, string subject, string message)
         {
-            message += Environment.NewLine;
-            message += "Do not reply to this email. It will be declined by the server.";
+            //Screw SES
+            var client = new SendGridClient(StaticVars.sendGrid);
+            var from = new EmailAddress("noreply@icywindclient.com", "IcyWind");
+            var to = new EmailAddress(email, email.Split('@').FirstOrDefault());
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, message, message);
+            var response = await client.SendEmailAsync(msg);
 
-            message += Environment.NewLine;
-            message += "Thank you for using IcyWind ~Potato";
-
-            var messageS = new MimeMessage();
-            messageS.From.Add(new MailboxAddress("noreply", "noreply@icywindclient.com"));
-            messageS.To.Add(new MailboxAddress(email.Split('@')[0], email));
-            messageS.Subject = subject;
-            messageS.Body = new TextPart()
-            {
-                Text = message
-            };
-
-            using (var client = new SmtpClient())
-            {
-                client.Connect("email-smtp.us-west-2.amazonaws.com", 587, SecureSocketOptions.StartTls);
-                client.Authenticate(StaticVars.emailUserPass);
-                client.Send(messageS);
-                client.Disconnect(true);
-            }
-            
-            return Task.FromResult(0);
+            return (int)response.StatusCode;
         }
 
         public Task SendSmsAsync(string number, string message)

@@ -48,6 +48,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="1.1.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="1.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+    <PackageReference Include="Sendgrid" Version="9.1.1" />
     <PackageReference Include="Twilio" Version="5.4.1-alpha1" />
   </ItemGroup>
   <ItemGroup>

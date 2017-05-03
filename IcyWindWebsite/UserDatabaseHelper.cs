@@ -34,7 +34,7 @@ namespace IcyWindWebsite
             return salt;
         }
 
-        public static void CreateUser(string username, string uid, string passhash, byte[] salt)
+        public static void CreateUser(string username, string uid, string passhash, string email, byte[] salt)
         {
             KeyFactory keyFactory = db.CreateKeyFactory("IcyWind");
             Key key = keyFactory.CreateKey(username);
@@ -46,6 +46,7 @@ namespace IcyWindWebsite
                 ["salt"] = ByteArrayToString(salt),
                 ["passhash"] = passhash,
                 ["uid"] = uid,
+                ["email"] = email,
                 ["IsAdmin"] = false,
                 ["IsDonator"] = false,
                 ["Banned"] = false,
